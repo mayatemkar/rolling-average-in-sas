@@ -36,13 +36,4 @@ The code demonstrates how to compute rolling averages for numerical variables ov
 4. *Review Results:*
    The results will be outputted to the specified dataset or log file. Review the results to ensure the rolling averages are computed correctly.
 
-## Example
 
-Here is an example of how to use the macro in the SAS code:
-
-```sas
-/* Include the macro definition */
-%include 'path/to/macro_definition.sas';
-
-/* Run the rolling average code */
-%rolling_avg(data=your_data, var=height, window=5);
