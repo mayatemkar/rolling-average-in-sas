@@ -1,0 +1,65 @@
+proc print data= sashelp.class;
+run;
+
+data work.class;
+     set sashelp.class;
+run;
+
+ ods pdf file="/home/u63929176/my personal folder.pdf"
+ 
+%macro rolling_avg;
+
+proc sort data =work.class;
+by sex;
+run;
+
+
+data testing;
+set work.class;
+
+  %do i= 1 %to 6;
+      open&i.=lag&i.(weight);
+  %end;
+  
+  array lag_var(*)open1-open6;
+  
+   by sex;
+   if first.sex then do;
+   count= 1;
+   /* to create another variable counter to delete the values we dont want*/
+   counter=1;
+   end;
+   
+   else do;
+      counter+1;
+   end;
+   
+   /*lag var to create lagging*/
+   do j=count to dim(lag_var);
+   lag_var(j)=.;
+   end;
+   count+1;
+   
+   weight_sum=sum(of open1-open8);
+   rolling_avg=weight_sum/6;
+   diff_sex_avg=(rolling_avg-weight)/rolling_avg;
+   
+   /* to delete the values which are less than 6*/
+  
+  if counter<6 then do;
+  weight_sum=.;
+   rolling_avg=.;
+   diff_sex_avg=.;
+  end;
+  drop open7 open8;
+  
+  /*to keep only required variables*/
+ keep name age sex height weight weight_sum rolling_avg diff_sex_avg;
+  run;
+   %mend;
+   %rolling_avg;
+   proc print data=testing;
+   run;
+ 
+ ods pdf close;
+
